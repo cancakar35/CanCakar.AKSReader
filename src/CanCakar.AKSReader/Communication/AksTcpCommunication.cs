@@ -1,0 +1,108 @@
+using CanCakar.AKSReader.Extensions;
+using System.Net;
+using System.Net.Sockets;
+
+namespace CanCakar.AKSReader.Communication
+{
+    internal class AksTcpCommunication : IAksDeviceCommunication, IDisposable
+    {
+        private readonly IPAddress ipAddress;
+        private readonly int port;
+        private readonly int readTimeout;
+        private readonly int writeTimeout;
+        private TcpClient? tcpClient;
+        private NetworkStream? networkStream;
+
+        public AksTcpCommunication(IPAddress ipAddress, int port, int readTimeout = 500, int writeTimeout = 500)
+        {
+            this.ipAddress = ipAddress;
+            this.port = port;
+            this.readTimeout = readTimeout;
+            this.writeTimeout = writeTimeout;
+        }
+
+        public bool IsConnected => tcpClient?.Connected ?? false;
+
+        public void Connect()
+        {
+            tcpClient = new TcpClient();
+            tcpClient.Connect(ipAddress, port);
+            networkStream = tcpClient.GetStream();
+            networkStream.ReadTimeout = readTimeout;
+            networkStream.WriteTimeout = writeTimeout;
+        }
+
+        public void Disconnect()
+        {
+            networkStream?.Close();
+            tcpClient?.Dispose();
+            networkStream = null;
+            tcpClient = null;
+        }
+
+        public async Task ConnectAsync()
+        {
+            tcpClient = new TcpClient();
+            await tcpClient.ConnectAsync(ipAddress, port);
+            networkStream = tcpClient.GetStream();
+            networkStream.ReadTimeout = readTimeout;
+            networkStream.WriteTimeout = writeTimeout;
+        }
+
+        public void Write(byte[] data)
+        {
+            if (networkStream == null)
+                throw new InvalidOperationException("No open connection.");
+
+            networkStream.Write(data, 0, data.Length);
+        }
+
+        public async Task WriteAsync(byte[] data, CancellationToken cancellationToken = default)
+        {
+            if (networkStream == null)
+                throw new InvalidOperationException("No open connection.");
+
+            if (tcpClient?.Available > 0) // discard previous data if available
+            {
+                byte[] buffer = new byte[tcpClient.Available];
+            #pragma warning disable CA2022 // Avoid inexact read with 'Stream.Read'
+            #if NET8_0_OR_GREATER
+                await networkStream.ReadAsync(buffer, cancellationToken);
+            #else
+                await networkStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
+            #endif
+            #pragma warning restore CA2022 // Avoid inexact read with 'Stream.Read'
+            }
+
+            // send command to device
+        #if NET8_0_OR_GREATER
+            await networkStream.WriteAsync(data, cancellationToken);
+        #else
+            await networkStream.WriteAsync(data, 0, data.Length, cancellationToken);
+        #endif
+        }
+
+        public void Read(byte[] buffer, int offset, int count)
+        {
+            if (networkStream == null)
+                throw new InvalidOperationException("No open connection.");
+
+            networkStream.ReadExactlyPolyfill(buffer, offset, count);
+        }
+
+        public async Task ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken = default)
+        {
+            if (networkStream == null)
+                throw new InvalidOperationException("No open connection.");
+
+            await networkStream.ReadExactlyAsyncPolyfill(buffer, offset, count, cancellationToken);
+        }
+
+        public void Dispose()
+        {
+            networkStream?.Dispose();
+            tcpClient?.Dispose();
+            GC.SuppressFinalize(this);
+        }
+    }
+}

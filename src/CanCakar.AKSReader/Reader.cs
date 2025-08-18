@@ -169,6 +169,8 @@ namespace CanCakar.AKSReader
         /// <param name="commandParam">Parameter for given command</param>
         /// <param name="cancellationToken">Cancellation</param>
         /// <returns>Device response as string</returns>
+        /// <exception cref="IOException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         public Task<string?> SendRawCommandAsync(byte readerId, AksCommand commandId, string commandParam = "", CancellationToken cancellationToken = default) =>
             SendRawCommandAsync(readerId, (byte)commandId, commandParam, cancellationToken);
 
@@ -179,6 +181,8 @@ namespace CanCakar.AKSReader
         /// <param name="commandId">AKS command id</param>
         /// <param name="commandParam">Parameter for given command</param>
         /// <returns>Device response as string</returns>
+        /// <exception cref="IOException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         public string? SendRawCommand(byte readerId, AksCommand commandId, string commandParam = "") =>
             SendRawCommand(readerId, (byte)commandId, commandParam);
 

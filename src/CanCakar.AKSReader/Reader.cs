@@ -194,6 +194,7 @@ namespace CanCakar.AKSReader
         /// <param name="readerId">Reader Id (150, 151 etc.)</param>
         /// <param name="newDeviceDateTime">DateTime object to be sent to the device</param>
         /// <returns>true if operation successfull otherwise false</returns>
+        /// <exception cref="IOException"></exception>
         public async Task<bool> SetDeviceTimeAsync(byte readerId, DateTime newDeviceDateTime)
         {
             int dayOfWeek = newDeviceDateTime.DayOfWeek == DayOfWeek.Sunday ? 7 : (int)newDeviceDateTime.DayOfWeek;
@@ -208,6 +209,7 @@ namespace CanCakar.AKSReader
         /// <param name="readerId">Reader Id (150, 151 etc.)</param>
         /// <param name="cancellation">Cancellation</param>
         /// <returns>Device date and time as DateTime or null if device returns incorrect or error response</returns>
+        /// <exception cref="IOException"></exception>
         public async Task<DateTime?> GetDeviceDateTimeAsync(byte readerId, CancellationToken cancellation = default)
         {
             string? response = await SendRawCommandAsync(readerId, AksCommand.GetDeviceDateTime, cancellationToken: cancellation);

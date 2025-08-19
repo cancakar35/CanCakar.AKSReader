@@ -60,7 +60,7 @@ namespace CanCakar.AKSReader.Communication
                 await serialPort.BaseStream.WriteAsync(data, 0, data.Length, linkedCts.Token);
 #endif
                 }
-                catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested)
+                catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
                 {
                     throw new TimeoutException("Operation Timed out.");
                 }
@@ -82,7 +82,7 @@ namespace CanCakar.AKSReader.Communication
                 {
                     await serialPort.BaseStream.ReadExactlyAsyncPolyfill(buffer, offset, count, cancellationToken);
                 }
-                catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested)
+                catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
                 {
                     throw new TimeoutException("Operation Timed out.");
                 }

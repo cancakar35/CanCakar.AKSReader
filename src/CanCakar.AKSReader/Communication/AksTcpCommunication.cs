@@ -73,13 +73,21 @@ namespace CanCakar.AKSReader.Communication
             #endif
             #pragma warning restore CA2022 // Avoid inexact read with 'Stream.Read'
             }
-
-            // send command to device
-        #if NET8_0_OR_GREATER
-            await networkStream.WriteAsync(data, cancellationToken);
-        #else
-            await networkStream.WriteAsync(data, 0, data.Length, cancellationToken);
-        #endif
+            using var timeoutCts = new CancellationTokenSource(networkStream.WriteTimeout);
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
+            try
+            {
+                // send command to device
+#if NET8_0_OR_GREATER
+                await networkStream.WriteAsync(data, linkedCts.Token);
+#else
+            await networkStream.WriteAsync(data, 0, data.Length, linkedCts.Token);
+#endif
+            }
+            catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
+            {
+                throw new TimeoutException("Operation Timed out.");
+            }
         }
 
         public void Read(byte[] buffer, int offset, int count)
@@ -95,7 +103,18 @@ namespace CanCakar.AKSReader.Communication
             if (networkStream == null)
                 throw new InvalidOperationException("No open connection.");
 
-            await networkStream.ReadExactlyAsyncPolyfill(buffer, offset, count, cancellationToken);
+            using var timeoutCts = new CancellationTokenSource(networkStream.WriteTimeout);
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
+
+
+            try
+            {
+                await networkStream.ReadExactlyAsyncPolyfill(buffer, offset, count, linkedCts.Token);
+            }
+            catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
+            {
+                throw new TimeoutException("Operation Timed out.");
+            }
         }
 
         public void Dispose()

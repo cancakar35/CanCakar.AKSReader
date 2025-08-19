@@ -1,5 +1,6 @@
 using CanCakar.AKSReader.Communication;
 using CanCakar.AKSReader.Enums;
+using System.Globalization;
 using System.Net;
 using System.Text;
 
@@ -185,6 +186,39 @@ namespace CanCakar.AKSReader
         /// <exception cref="InvalidOperationException"></exception>
         public string? SendRawCommand(byte readerId, AksCommand commandId, string commandParam = "") =>
             SendRawCommand(readerId, (byte)commandId, commandParam);
+
+
+        /// <summary>
+        /// Set device date and time with given DateTime <paramref name="newDeviceDateTime"/>
+        /// </summary>
+        /// <param name="readerId">Reader Id (150, 151 etc.)</param>
+        /// <param name="newDeviceDateTime">DateTime object to be sent to the device</param>
+        /// <returns>true if operation successfull otherwise false</returns>
+        public async Task<bool> SetDeviceTimeAsync(byte readerId, DateTime newDeviceDateTime)
+        {
+            int dayOfWeek = newDeviceDateTime.DayOfWeek == DayOfWeek.Sunday ? 7 : (int)newDeviceDateTime.DayOfWeek;
+            string commandParam = $"{newDeviceDateTime:HHmmss}0{dayOfWeek}{newDeviceDateTime:ddMMyy}";
+            string? result = await SendRawCommandAsync(readerId, AksCommand.SetDeviceDateTime, commandParam);
+            return result == "o";
+        }
+
+        /// <summary>
+        /// Get device date and time
+        /// </summary>
+        /// <param name="readerId">Reader Id (150, 151 etc.)</param>
+        /// <param name="cancellation">Cancellation</param>
+        /// <returns>Device date and time as DateTime or null if device returns incorrect or error response</returns>
+        public async Task<DateTime?> GetDeviceDateTimeAsync(byte readerId, CancellationToken cancellation = default)
+        {
+            string? response = await SendRawCommandAsync(readerId, AksCommand.GetDeviceDateTime, cancellationToken: cancellation);
+            if (response == null || response.Length < 12)
+                return null;
+
+            if (!DateTime.TryParseExact(response[1..].Remove(6, 2), "HHmmssddMMyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result))
+                return null;
+
+            return result;
+        }
 
         /// <summary>
         /// Free resources

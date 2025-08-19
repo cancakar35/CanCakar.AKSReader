@@ -49,7 +49,7 @@ namespace CanCakar.AKSReader.Communication
         {
             serialPort.DiscardInBuffer();
             using var timeoutCts = new CancellationTokenSource(serialPort.WriteTimeout);
-            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
             using (linkedCts.Token.Register(serialPort.DiscardOutBuffer))
             {
                 try
@@ -75,7 +75,7 @@ namespace CanCakar.AKSReader.Communication
         public async Task ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken = default)
         {
             using var timeoutCts = new CancellationTokenSource(serialPort.ReadTimeout);
-            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
             using (linkedCts.Token.Register(serialPort.DiscardInBuffer))
             {
                 try

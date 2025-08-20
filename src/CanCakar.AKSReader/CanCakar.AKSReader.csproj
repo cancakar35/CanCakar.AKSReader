@@ -20,6 +20,7 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageId>CanCakar.AKSReader</PackageId>
+    <PackageTags>mifare;proximity;card reading;access control systems;aks elektronik;aks;acs</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,5 +1,9 @@
 using CanCakar.AKSReader.Communication;
 using Moq;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace CanCakar.AKSReader.Tests
@@ -48,21 +52,22 @@ namespace CanCakar.AKSReader.Tests
             // Arrange
             byte readerId = 150;
             byte commandId = 10;
-            byte[] commandBytes = [2, 255, 150, 4, 10, 54, 53, 3];
-            byte[] response = [2, 150, 255, 4, 111, 48, 48, 3];
+            byte[] commandBytes = new byte[] { 2, 255, 150, 4, 10, 54, 53, 3 };
+            byte[] response = new byte[] { 2, 150, 255, 4, 111, 48, 48, 3 };
 
-            mockDevice.Setup(x => x.WriteAsync(It.Is<byte[]>(x=>x.SequenceEqual(commandBytes)), CancellationToken.None))
+            mockDevice.Setup(x => x.WriteAsync(It.Is<byte[]>(b => b.SequenceEqual(commandBytes)), CancellationToken.None))
                 .Returns(Task.CompletedTask);
 
             mockDevice.Setup(x => x.ReadAsync(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>(), CancellationToken.None))
-                .Callback<byte[], int, int, CancellationToken>((buffer, offset, count, token) => {
+                .Callback<byte[], int, int, CancellationToken>((buffer, offset, count, token) =>
+                {
                     Array.Copy(response, 0, buffer, offset, count);
-                    response = [.. response.Skip(count)];
+                    response = response.Skip(count).ToArray();
                 })
                 .Returns(Task.CompletedTask);
 
             // Act
-            string? result = await reader.SendRawCommandAsync(readerId, commandId);
+            string result = await reader.SendRawCommandAsync(readerId, commandId);
 
             // Assert
             Assert.Equal("o", result);

@@ -1,3 +1,5 @@
+using CanCakar.AKSReader.Enums;
+using System;
 using System.Text;
 using Xunit;
 
@@ -16,7 +18,7 @@ namespace CanCakar.AKSReader.Tests
         public void XorBytes_ReturnZero_WhenInputIsEmpty()
         {
             // Arrange
-            byte[] input = [];
+            byte[] input = Array.Empty<byte>();
 
             // Act
             var result = commandHandler.XORBytes(input);
@@ -29,7 +31,7 @@ namespace CanCakar.AKSReader.Tests
         public void XorBytes_ReturnXorResult_WhenInputIsNotEmpty()
         {
             // Arrange
-            byte[] input = [2, 255, 150, 10, 9, 8];
+            byte[] input = new byte[] { 2, 255, 150, 10, 9, 8 };
             // Act
             var result = commandHandler.XORBytes(input);
             // Assert
@@ -40,7 +42,7 @@ namespace CanCakar.AKSReader.Tests
         public void CreateBcc_ReturnsCorrectHexString_WhenInputIsNotEmpty()
         {
             // Arrange
-            byte[] input = [2, 255, 150, 4, 10];
+            byte[] input = new byte[] { 2, 255, 150, 4, 10 };
             string expectedBcc = "65";
             // Act
             var result = commandHandler.CreateBcc(input);
@@ -52,7 +54,7 @@ namespace CanCakar.AKSReader.Tests
         public void CreateBcc_ShouldAlwaysReturnTwoChar()
         {
             // Arrange
-            byte[] input = [1, 2];
+            byte[] input = new byte[] { 1, 2 };
             string expectedBcc = "03";
             // Act
             var result = commandHandler.CreateBcc(input);
@@ -65,8 +67,20 @@ namespace CanCakar.AKSReader.Tests
         {
             // Arrange
             byte readerId = 150;
-            byte[] dataPart = [17, ..Encoding.UTF8.GetBytes("+12300019082025Pass")];
-            byte[] expectedCommand = [2, 255, 150, (byte)(dataPart.Length + 3), .. dataPart, 55, 50, 3];
+            byte commandId = (byte)AksCommand.AccessOperation;
+            byte[] paramBytes = Encoding.UTF8.GetBytes("+12300019082025Pass");
+            byte[] dataPart = new byte[paramBytes.Length + 1];
+            dataPart[0] = commandId;
+            paramBytes.CopyTo(dataPart, 1);
+            byte[] expectedCommand = new byte[8 + paramBytes.Length];
+            expectedCommand[0] = 2;
+            expectedCommand[1] = 255;
+            expectedCommand[2] = 150;
+            expectedCommand[3] = (byte)(paramBytes.Length + 4);
+            dataPart.CopyTo(expectedCommand, 4);
+            expectedCommand[expectedCommand.Length - 3] = 55;
+            expectedCommand[expectedCommand.Length - 2] = 50;
+            expectedCommand[expectedCommand.Length - 1] = 3;
             // Act
             var result = commandHandler.CreateCommand(readerId, dataPart);
             // Assert
@@ -77,7 +91,7 @@ namespace CanCakar.AKSReader.Tests
         public void GetDataPart_ShouldReturnNull_WhenBufferDoesNotContainStxByte()
         {
             // Arrange
-            byte[] buffer = [255, 150, 10, 3];
+            byte[] buffer = new byte[] { 255, 150, 10, 3 };
             // Act
             var result = commandHandler.GetDataPart(buffer);
             // Assert
@@ -87,7 +101,7 @@ namespace CanCakar.AKSReader.Tests
         public void GetDataPart_ShouldReturnNull_WhenBufferDoesNotContainEtxByte()
         {
             // Arrange
-            byte[] buffer = [2, 255, 150, 10];
+            byte[] buffer = new byte[] { 2, 255, 150, 10 };
             // Act
             var result = commandHandler.GetDataPart(buffer);
             // Assert
@@ -97,8 +111,8 @@ namespace CanCakar.AKSReader.Tests
         public void GetDataPart_ShouldReturnDataPart_WhenBufferIsValid()
         {
             // Arrange
-            byte[] buffer = [2, 255, 150, 4, 111, 48, 48, 3];
-            byte[] expected = [111];
+            byte[] buffer = new byte[] { 2, 255, 150, 4, 111, 48, 48, 3 };
+            byte[] expected = new byte[] { 111 };
             // Act
             var result = commandHandler.GetDataPart(buffer);
             // Assert

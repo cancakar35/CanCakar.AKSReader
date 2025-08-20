@@ -21,6 +21,8 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageId>CanCakar.AKSReader</PackageId>
     <PackageTags>mifare;proximity;card reading;access control systems;aks elektronik;aks;acs</PackageTags>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\CanCakar.AksReader.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -47,8 +49,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="CanCakar.AKSReader.Tests" />
-    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    <InternalsVisibleTo Include="CanCakar.AKSReader.Tests" PublicKey="0024000004800000940000000602000000240000525341310004000001000100c9c2ab1d7af8740c41998b76b3248557aca69857e80aeafb9df23e2d18c880f4d9e8214412ad9fc027d702d9a2abbb287074ec349703f942109d220f9541a0d07d7ebaaa3f0355f45ec4f4ecf99f9cfa9fcf573ab4e2c8ec4d5093161e632983e7a3675fc766de861573263797a890ea84f69a9022a12aad4c1ae4aee664c2bc" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" PublicKey="0024000004800000940000000602000000240000525341310004000001000100c547cac37abd99c8db225ef2f6c8a3602f3b3606cc9891605d02baa56104f4cfc0734aa39b93bf7852f7d9266654753cc297e7d2edfe0bac1cdcf9f717241550e0a7b191195b7667bb4f64bcb8e2121380fd1d9d46ad2d92d2d15605093924cceaf74c4861eff62abf69b9291ed0a340e113be11e6a7d3113e92484cf7045cc7" />
   </ItemGroup>
 
 </Project>

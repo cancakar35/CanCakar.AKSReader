@@ -1,0 +1,21 @@
+name: Bug Report
+description: File a bug report
+name: "Bug Report"
+body:
+- type: "input"
+  attributes:
+    label: "Device  Model"
+    placeholder: "Your Device Model"
+  validations:
+    required: true
+- type: "input"
+  attributes:
+    label: "If worked before, what was the last working version?"
+  validations:
+    required: false
+- type: "textarea"
+  attributes:
+    label: "Details"
+    placeholder: "Add your problem details here."
+  validations:
+    required: true

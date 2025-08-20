@@ -1,1 +1,19 @@
 # CanCakar.AKSReader
+
+Cross platform integartion library for AKS Elektronik card readers.
+
+## Quick Start
+
+Basic usage.
+
+```csharp
+using CanCakar.AKSReader;
+using CanCakar.AKSReader.Enums;
+
+using (var myReader = new Reader(IPAddress.Parse("192.168.1.139"), 1001)) // or use COM,baudrate overload for serial port
+{
+    await myReader.ConnectAsync();
+
+    string? response = await myReader.SendRawCommandAsync(150, AksCommand.ReadCard);
+}
+```

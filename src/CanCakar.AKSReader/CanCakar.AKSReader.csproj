@@ -14,7 +14,12 @@
     <Description>Cross platform integartion library for AKS Elektronik card readers</Description>
     <Authors>Can Cakar</Authors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageProjectUrl>https://github.com/cancakar35/CanCakar.AKSReader</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/cancakar35/CanCakar.AKSReader</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageId>CanCakar.AKSReader</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,7 +35,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\README.md" Pack="true" PackagePath="" />
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

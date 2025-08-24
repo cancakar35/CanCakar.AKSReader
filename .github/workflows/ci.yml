@@ -22,7 +22,7 @@ jobs:
     - uses: dotnet/nbgv@master
       with:
         setAllVars: true
-    - run: echo "NBGV_SemVer2 $NBGV_SemVer2"
+    - run: echo "NBGV_SemVer2 ${{ env.NBGV_SemVer2 }}"
     
     - name: Restore dependencies
       run: dotnet restore --no-cache
@@ -33,7 +33,7 @@ jobs:
     - name: Pack
       run: dotnet pack ./src/CanCakar.AKSReader/CanCakar.AKSReader.csproj -c Release -o artifacts --include-symbols --include-source -p:Version=${{ env.NBGV_SemVer2 }}
     - name: Publish
-      run: dotnet nuget push ./artifacts/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{secrets.NUGET_API_KEY}} --skip-duplicate
+      run: dotnet nuget push "./artifacts/*.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{secrets.NUGET_API_KEY}} --skip-duplicate
     - name: Github Release
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

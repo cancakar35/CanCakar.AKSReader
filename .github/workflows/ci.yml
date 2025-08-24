@@ -32,8 +32,17 @@ jobs:
       run: dotnet test --configuration Release --no-build --verbosity normal
     - name: Pack
       run: dotnet pack ./src/CanCakar.AKSReader/CanCakar.AKSReader.csproj -c Release -o artifacts --include-symbols --include-source -p:Version=${{ env.NBGV_SemVer2 }}
-    - name: Publish
-      run: dotnet nuget push "./artifacts/*.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{secrets.NUGET_API_KEY}} --skip-duplicate
+    
+    - name: Publish to nuget
+      run: |
+        Get-ChildItem artifacts -Filter *.nupkg | ForEach-Object {
+          dotnet nuget push $_.FullName `
+            --source https://api.nuget.org/v3/index.json `
+            --api-key ${{ secrets.NUGET_API_KEY }} `
+            --skip-duplicate
+        }
+      shell: pwsh
+      
     - name: Github Release
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

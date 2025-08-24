@@ -11,5 +11,6 @@
     <PackageVersion Include="PolySharp" Version="1.15.0" />
     <PackageVersion Include="System.IO.Ports" Version="9.0.8" />
     <PackageVersion Include="System.Memory" Version="4.6.3" />
+    <PackageVersion Include="Nerdbank.GitVersioning" Version="3.7.115" />
   </ItemGroup>
 </Project>

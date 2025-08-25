@@ -31,7 +31,7 @@ jobs:
     - name: Test
       run: dotnet test --configuration Release --no-build --verbosity normal
     - name: Pack
-      run: dotnet pack ./src/CanCakar.AKSReader/CanCakar.AKSReader.csproj -c Release -o artifacts --include-symbols --include-source -p:Version=${{ env.NBGV_SemVer2 }}
+      run: dotnet pack ./src/CanCakar.AKSReader/CanCakar.AKSReader.csproj -c Release -o artifacts --no-build --include-symbols --include-source
 
     - name: Github Release
       env:

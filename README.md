@@ -1,9 +1,14 @@
-# CanCakar.AKSReader
+# CanCakar.AKSReader ![Build](https://github.com/cancakar35/CanCakar.AKSReader/actions/workflows/ci.yml/badge.svg) [![NuGet](https://img.shields.io/nuget/v/CanCakar.AKSReader.svg)](https://www.nuget.org/packages/CanCakar.AKSReader)
 
 Cross platform integartion library for AKS Elektronik card readers.
 
 ## Quick Start
 
+Installation
+
+```bash
+dotnet add package CanCakar.AKSReader
+```
 Basic usage.
 
 ```csharp

@@ -17,12 +17,14 @@
     <PackageProjectUrl>https://github.com/cancakar35/CanCakar.AKSReader</PackageProjectUrl>
     <RepositoryUrl>https://github.com/cancakar35/CanCakar.AKSReader</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageId>CanCakar.AKSReader</PackageId>
-    <PackageTags>mifare;proximity;card reading;access control systems;aks elektronik;aks;acs</PackageTags>
+    <PackageTags>mifare;proximity;card_reading;access_control;aks_elektronik;aks</PackageTags>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\CanCakar.AksReader.snk</AssemblyOriginatorKeyFile>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>

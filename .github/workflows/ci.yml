@@ -32,6 +32,11 @@ jobs:
       run: dotnet test --configuration Release --no-build --verbosity normal
     - name: Pack
       run: dotnet pack ./src/CanCakar.AKSReader/CanCakar.AKSReader.csproj -c Release -o artifacts --include-symbols --include-source -p:Version=${{ env.NBGV_SemVer2 }}
+
+    - name: Github Release
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: gh release create v${{ env.NBGV_SemVer2 }} --title v${{ env.NBGV_SemVer2 }} --generate-notes
     
     - name: Publish to nuget
       run: |
@@ -42,9 +47,3 @@ jobs:
             --skip-duplicate
         }
       shell: pwsh
-      
-    - name: Github Release
-      env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: gh release create v${{ env.NBGV_SemVer2 }} --title v${{ env.NBGV_SemVer2 }} --generate-notes
-      

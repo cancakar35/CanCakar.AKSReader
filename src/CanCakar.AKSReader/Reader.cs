@@ -47,6 +47,18 @@ namespace CanCakar.AKSReader
         public bool IsConnected => aksDevice.IsConnected;
 
         /// <summary>
+        /// Get or Set the timeout for device operations
+        /// </summary>
+        public int Timeout
+        {
+            get => aksDevice.Timeout;
+            set
+            {
+                aksDevice.Timeout = value;
+            }
+        }
+
+        /// <summary>
         /// Open connection
         /// </summary>
         public void Connect()
@@ -80,6 +92,7 @@ namespace CanCakar.AKSReader
         /// <exception cref="IOException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="OperationCanceledException"></exception>
+        /// <exception cref="TimeoutException"></exception>
         public async Task<string?> SendRawCommandAsync(byte readerId, byte commandId, string commandParam = "", CancellationToken cancellationToken = default)
         {
             byte[] commandAndParamsBytes = [commandId, .. Encoding.UTF8.GetBytes(commandParam)];

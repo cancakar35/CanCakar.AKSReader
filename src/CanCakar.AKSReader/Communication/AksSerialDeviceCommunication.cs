@@ -6,21 +6,38 @@ namespace CanCakar.AKSReader.Communication
     internal class AksSerialPortCommunication : IAksDeviceCommunication, IDisposable
     {
         private readonly SerialPort serialPort;
+        private int timeout = 500;
 
-        public AksSerialPortCommunication(string portName, int baudRate, int readTimeout = 500, int writeTimeout = 500)
-            : this(new SerialPort(portName, baudRate) { ReadTimeout = readTimeout, WriteTimeout = writeTimeout })
+        public AksSerialPortCommunication(string portName, int baudRate)
+            : this(new SerialPort(portName, baudRate))
         {
+            serialPort.DtrEnable = true;
+            serialPort.RtsEnable = true;
+            serialPort.ReadTimeout = timeout;
+            serialPort.WriteTimeout = timeout;
         }
-
 
         internal AksSerialPortCommunication(SerialPort serialPortObject)
         {
             serialPort = serialPortObject ?? throw new ArgumentNullException(nameof(serialPortObject));
-            serialPort.DtrEnable = true;
-            serialPort.RtsEnable = true;
         }
 
         public bool IsConnected => serialPort.IsOpen;
+
+        public int Timeout
+        {
+            get => timeout;
+            set
+            {
+                if (value < -1)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(Timeout));
+                }
+                timeout = value;
+                serialPort.ReadTimeout = value;
+                serialPort.WriteTimeout = value;
+            }
+        }
 
         public void Connect()
         {
@@ -57,7 +74,7 @@ namespace CanCakar.AKSReader.Communication
 #if NET8_0_OR_GREATER
                     await serialPort.BaseStream.WriteAsync(data, linkedCts.Token);
 #else
-                await serialPort.BaseStream.WriteAsync(data, 0, data.Length, linkedCts.Token);
+                    await serialPort.BaseStream.WriteAsync(data, 0, data.Length, linkedCts.Token);
 #endif
                 }
                 catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested && !cancellationToken.IsCancellationRequested)

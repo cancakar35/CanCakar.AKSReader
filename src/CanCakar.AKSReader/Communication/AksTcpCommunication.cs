@@ -118,7 +118,7 @@ namespace CanCakar.AKSReader.Communication
             if (networkStream == null)
                 throw new InvalidOperationException("No open connection.");
 
-            using var timeoutCts = new CancellationTokenSource(networkStream.WriteTimeout);
+            using var timeoutCts = new CancellationTokenSource(networkStream.ReadTimeout);
             using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
 
 

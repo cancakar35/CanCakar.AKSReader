@@ -3,6 +3,7 @@ namespace CanCakar.AKSReader.Communication
     internal interface IAksDeviceCommunication : IDisposable
     {
         bool IsConnected { get; }
+        int Timeout { get; set; }
         void Connect();
         void Disconnect();
         Task ConnectAsync();

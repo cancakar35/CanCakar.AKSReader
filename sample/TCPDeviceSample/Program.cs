@@ -57,7 +57,7 @@ while (reader.IsConnected)
             string cardId = readCardResp[3..];
             if (myUsers.TryGetValue(cardId, out string? personName))
             {
-                Console.WriteLine($"{DateTime.Now:dd.MM.yyyy HH:mm}{cardId} {personName} Pass");
+                Console.WriteLine($"{DateTime.Now:dd.MM.yyyy HH:mm} {cardId} {personName} Pass");
                 string? openDoorResp = await reader.SendRawCommandAsync(readerId, AksCommand.AccessOperation, $"+{DateTime.Now:HHmmssddMMyyyy}{personName}");
                 if (openDoorResp != "o")
                 {

@@ -42,7 +42,8 @@ namespace CanCakar.AKSReader
         }
 
         /// <summary>
-        /// Check device is connected
+        /// Check device is connected.
+        /// <para><strong>Do not rely on this property when using async method with TCP devices.</strong></para>
         /// </summary>
         public bool IsConnected => aksDevice.IsConnected;
 

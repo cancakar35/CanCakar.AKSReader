@@ -24,5 +24,5 @@ using (var myReader = new Reader(IPAddress.Parse("192.168.1.139"), 1001)) // or 
 ```
 
 ## Known Issues
-- Reader.IsConnected returns false after cancellation occured in one of the send operations. (Caused by C# Socket class), i am working on it
+- Reader.IsConnected returns false after cancellation occured in async methods.
   

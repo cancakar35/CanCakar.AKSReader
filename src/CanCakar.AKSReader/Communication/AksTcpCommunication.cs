@@ -8,28 +8,43 @@ namespace CanCakar.AKSReader.Communication
     {
         private readonly IPAddress ipAddress;
         private readonly int port;
-        private readonly int readTimeout;
-        private readonly int writeTimeout;
+        private int timeout = 500;
         private TcpClient? tcpClient;
         private NetworkStream? networkStream;
 
-        public AksTcpCommunication(IPAddress ipAddress, int port, int readTimeout = 500, int writeTimeout = 500)
+        public AksTcpCommunication(IPAddress ipAddress, int port)
         {
             this.ipAddress = ipAddress;
             this.port = port;
-            this.readTimeout = readTimeout;
-            this.writeTimeout = writeTimeout;
         }
 
         public bool IsConnected => tcpClient?.Connected ?? false;
+
+        public int Timeout
+        {
+            get => timeout;
+            set
+            {
+                if (value < -1)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(Timeout));
+                }
+                timeout = value;
+                if (IsConnected && networkStream != null)
+                {
+                    networkStream.ReadTimeout = value;
+                    networkStream.WriteTimeout = value;
+                }
+            }
+        }
 
         public void Connect()
         {
             tcpClient = new TcpClient();
             tcpClient.Connect(ipAddress, port);
             networkStream = tcpClient.GetStream();
-            networkStream.ReadTimeout = readTimeout;
-            networkStream.WriteTimeout = writeTimeout;
+            networkStream.ReadTimeout = timeout;
+            networkStream.WriteTimeout = timeout;
         }
 
         public void Disconnect()
@@ -45,8 +60,8 @@ namespace CanCakar.AKSReader.Communication
             tcpClient = new TcpClient();
             await tcpClient.ConnectAsync(ipAddress, port);
             networkStream = tcpClient.GetStream();
-            networkStream.ReadTimeout = readTimeout;
-            networkStream.WriteTimeout = writeTimeout;
+            networkStream.ReadTimeout = timeout;
+            networkStream.WriteTimeout = timeout;
         }
 
         public void Write(byte[] data)
@@ -103,7 +118,7 @@ namespace CanCakar.AKSReader.Communication
             if (networkStream == null)
                 throw new InvalidOperationException("No open connection.");
 
-            using var timeoutCts = new CancellationTokenSource(networkStream.WriteTimeout);
+            using var timeoutCts = new CancellationTokenSource(networkStream.ReadTimeout);
             using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
 
 

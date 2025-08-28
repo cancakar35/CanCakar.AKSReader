@@ -16,6 +16,7 @@ dotnet_style_object_initializer = true:suggestion
 dotnet_style_collection_initializer = true:suggestion
 tab_width = 4
 dotnet_diagnostic.CA1822.severity = none
+dotnet_diagnostic.CA1512.severity = none
 
 [*.{json,xml,config,csproj,props}]
 indent_size = 2

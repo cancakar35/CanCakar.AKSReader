@@ -34,7 +34,7 @@ namespace CanCakar.AKSReader
             int startIndex = buffer.IndexOf((byte)2);
             if (startIndex == -1) return null;
             var remainingBuffer = buffer[(startIndex + 1)..];
-            int endIndex = remainingBuffer.LastIndexOf((byte)3);
+            int endIndex = remainingBuffer.IndexOf((byte)3);
             if (endIndex == -1) return null;
 
             int dataLength = (int)remainingBuffer[2];
